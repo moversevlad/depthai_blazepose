@@ -29,6 +29,8 @@ parser_tracker.add_argument('-t', '--trace', action="store_true",
                     help="Print some debug messages")
 parser_tracker.add_argument('--force_detection', action="store_true", 
                     help="Force person detection on every frame (never use landmarks from previous frame to determine ROI)")
+parser_tracker.add_argument('--only_detection', action="store_true", 
+                    help="Edge runs only detection")
 
 parser_renderer = parser.add_argument_group("Renderer arguments")
 parser_renderer.add_argument('-3', '--show_3d', choices=[None, "image", "world", "mixed"], default=None,
@@ -39,10 +41,14 @@ parser_renderer.add_argument("-o","--output",
 
 args = parser.parse_args()
 
-if args.edge:
-    from BlazeposeDepthaiEdge import BlazeposeDepthai
+if args.only_detection:
+    from BlazeposeDepthaiEdgeDetection import BlazeposeDepthai
 else:
-    from BlazeposeDepthai import BlazeposeDepthai
+    if args.edge:
+        from BlazeposeDepthaiEdge import BlazeposeDepthai
+    else:
+        from BlazeposeDepthai import BlazeposeDepthai
+
 tracker = BlazeposeDepthai(input_src=args.input, 
             pd_model=args.pd_m,
             lm_model=args.lm_m,
